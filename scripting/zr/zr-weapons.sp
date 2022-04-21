@@ -3,15 +3,15 @@
 #include <adminmenu>
 #include <cstrike>
 #include <sdktools>
-#include "simplezombie/sz-core"
+#include "zr/zr-core"
 
 #pragma newdecls required
 #pragma semicolon 1
 
 public Plugin myinfo = {
-    name = "Simple Zombie - Weapons",
+    name = "Zombies Resurrected - Weapons",
     author = "Peak",
-    description = "Handle buying and restriction of weapons in SZ",
+    description = "Handle buying and restriction of weapons in ZR",
     version = "0.1",
     url = ""
 };
@@ -25,7 +25,7 @@ Handle SDKWeapon_GetSlot;
 
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
-    RegPluginLibrary("sz-weapons");
+    RegPluginLibrary("zr-weapons");
     return APLRes_Success;
 }
 
@@ -33,7 +33,7 @@ public void OnPluginStart() {
     RegConsoleCmd("sm_zmarket", WeaponsMenuCommand, "Open the weapons menu");
     RegConsoleCmd("sm_guns", WeaponsMenuCommand, "Open the weapons menu");
 
-    weaponsGameData = LoadGameConfigFile("sz-weapons.games");
+    weaponsGameData = LoadGameConfigFile("zr-weapons.games");
 
     StartPrepSDKCall(SDKCall_Entity);
     PrepSDKCall_SetFromConf(weaponsGameData, SDKConf_Virtual, "CBaseCombatWeapon::Deploy");
@@ -53,13 +53,13 @@ public void OnPluginStart() {
         LogError("Failed to prep CBaseCombatWeapon::GetSlot SDK Call");
     }
 
-    LoadTranslations("sz-weapons.phrases");
+    LoadTranslations("zr-weapons.phrases");
 
     char path[PLATFORM_MAX_PATH];
     char error[256];
     
     weaponsMenu = new TopMenu(WeaponsMenuHandler);
-    BuildPath(Path_SM, path, sizeof(path), "configs/simplezombie/sz-weapons-menu.txt");
+    BuildPath(Path_SM, path, sizeof(path), "configs/zr/zr-weapons-menu.txt");
 
     SMCParser parser = new SMCParser();
     parser.OnEnterSection = WeaponConfigNewSection;
@@ -69,7 +69,7 @@ public void OnPluginStart() {
 
     
     if (!weaponsMenu.LoadConfig(path, error, sizeof(error))) {
-        LogError("Could not load sz-weapons menu config (file \"%s\": %s", path, error);
+        LogError("Could not load zr-weapons menu config (file \"%s\": %s", path, error);
     }
 }
 
@@ -86,13 +86,13 @@ SMCResult WeaponConfigKeyValue(SMCParser cmd, const char[] key, const char[] val
 }
 
 public void OnAdminMenuReady(Handle topmenu) {
-    clientMenu = SZ_GetClientMenu();
-    clientMenu.AddItem("Weapons", ClientMenuHandler, INVALID_TOPMENUOBJECT);
+    clientMenu = ZR_GetClientMenu();
+    clientMenu.AddItem("ZR Weapons", ClientMenuHandler, INVALID_TOPMENUOBJECT);
 }
 
 void ClientMenuHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
     switch (action) {
-        case TopMenuAction_DisplayOption: strcopy(buffer, maxlength, "Buy Weapons");
+        case TopMenuAction_DisplayOption: strcopy(buffer, maxlength, "ZR Weapons");
         case TopMenuAction_SelectOption: weaponsMenu.Display(param, TopMenuPosition_Start);
     }
 }
@@ -104,7 +104,7 @@ Action WeaponsMenuCommand(int client, int args) {
 
 void WeaponsMenuHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
     switch (action) {
-        case TopMenuAction_DisplayTitle: strcopy(buffer, maxlength, "Buy Weapons");
+        case TopMenuAction_DisplayTitle: strcopy(buffer, maxlength, "ZR Weapons");
     }
 }
 

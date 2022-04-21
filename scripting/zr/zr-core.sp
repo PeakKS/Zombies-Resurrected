@@ -2,15 +2,15 @@
 #include <adminmenu>
 #include <sdktools>
 #include <cstrike>
-#include "simplezombie/sz-core"
+#include "zr/zr-core"
 
 #pragma newdecls required
 #pragma semicolon 1
 
 public Plugin myinfo = {
-    name = "Simple Zombie - Core",
+    name = "Zombies Resurrected - Core",
     author = "Peak",
-    description = "Core plugin for the Simple Zombie mode",
+    description = "Core plugin for ZR",
     version = "0.1",
     url = ""
 };
@@ -34,28 +34,28 @@ GlobalForward ZombieForward;
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
 
-    HumanForwardPre = new GlobalForward("SZ_OnClientHumanPre", ET_Hook, Param_Cell);
-    HumanForward = new GlobalForward("SZ_OnClientHuman", ET_Ignore, Param_Cell);
-    CreateNative("SZ_SpawnHuman", Native_SpawnHuman);
+    HumanForwardPre = new GlobalForward("ZR_OnClientHumanPre", ET_Hook, Param_Cell);
+    HumanForward = new GlobalForward("ZR_OnClientHuman", ET_Ignore, Param_Cell);
+    CreateNative("ZR_SpawnHuman", Native_SpawnHuman);
 
-    ZombieForwardPre = new GlobalForward("SZ_OnClientZombiePre", ET_Hook, Param_Cell);
-    ZombieForward = new GlobalForward("SZ_OnClientZombie", ET_Ignore, Param_Cell);
-    CreateNative("SZ_SpawnZombie", Native_SpawnZombie);
+    ZombieForwardPre = new GlobalForward("ZR_OnClientZombiePre", ET_Hook, Param_Cell);
+    ZombieForward = new GlobalForward("ZR_OnClientZombie", ET_Ignore, Param_Cell);
+    CreateNative("ZR_SpawnZombie", Native_SpawnZombie);
 
-    CreateNative("SZ_GetAdminMenuCategory", Native_GetAdminMenuCategory);
-    CreateNative("SZ_GetClientMenu", Native_GetClientMenu);
+    CreateNative("ZR_GetAdminMenuCategory", Native_GetAdminMenuCategory);
+    CreateNative("ZR_GetClientMenu", Native_GetClientMenu);
 
-    RegAdminCmd("sm_zadmin", AdminMenuCommand, ADMFLAG_GENERIC, "Open SZ admin menu");
-    RegAdminCmd("sm_infect", InfectMenuCommand, ADMFLAG_SLAY, "Open SZ infection menu");
-    RegConsoleCmd("sm_zmenu", ClientMenuCommand, "Open menu for client accessible SZ settings");
+    RegAdminCmd("sm_zadmin", AdminMenuCommand, ADMFLAG_GENERIC, "Open ZR admin menu");
+    RegAdminCmd("sm_infect", InfectMenuCommand, ADMFLAG_SLAY, "Open ZR infection menu");
+    RegConsoleCmd("sm_zmenu", ClientMenuCommand, "Open menu for client accessible ZR settings");
 
-    RegPluginLibrary("sz-core");
+    RegPluginLibrary("zr-core");
     return APLRes_Success;
 }
 
 public void OnPluginStart() {
-    infectRatio = CreateConVar("sz_infect_ratio", "0.15", "Percentage of humans to infect on map start");
-    infectTime = CreateConVar("sz_infect_time", "20", "Time until first infection");
+    infectRatio = CreateConVar("zr_infect_ratio", "0.15", "Percentage of humans to infect on map start");
+    infectTime = CreateConVar("zr_infect_time", "20", "Time until first infection");
 
     HookEvent("round_start", RoundStart);
     HookEvent("round_end", RoundEnd);
@@ -154,7 +154,7 @@ Action JoinTeamHook(int client, const char[] command, int argc) {
 public void OnAdminMenuCreated(Handle topmenu) {
     //Create both admin and client menu here so this forward can be reused
     adminMenu = TopMenu.FromHandle(topmenu);
-    adminCategory = adminMenu.AddCategory("Simple Zombie", AdminCategoryHandler);
+    adminCategory = adminMenu.AddCategory("Zombies Resurrected", AdminCategoryHandler);
     adminMenu.AddItem("Infections", InfectItemHandler, adminCategory);
 
     clientMenu = new TopMenu(ClientMenuHandler);
@@ -172,20 +172,20 @@ Action ClientMenuCommand(int client, int args) {
 
 void ClientMenuHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
     switch (action) {
-        case TopMenuAction_DisplayTitle: strcopy(buffer, maxlength, "Simple Zombie client settings");
+        case TopMenuAction_DisplayTitle: strcopy(buffer, maxlength, "ZR client settings");
     }
 }
 
 void AdminCategoryHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
     switch (action) {
-        case TopMenuAction_DisplayOption: strcopy(buffer, maxlength, "Simple Zombie");
-        case TopMenuAction_DisplayTitle: strcopy(buffer, maxlength, "Simple Zombie");
+        case TopMenuAction_DisplayOption: strcopy(buffer, maxlength, "Zombies Resurrected");
+        case TopMenuAction_DisplayTitle: strcopy(buffer, maxlength, "Zombies Resurrected");
     }
 }
 
 void InfectItemHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
     switch (action) {
-        case TopMenuAction_DisplayOption: strcopy(buffer, maxlength, "Infect");
+        case TopMenuAction_DisplayOption: strcopy(buffer, maxlength, "Infections");
         case TopMenuAction_SelectOption: CreateInfectMenu(param);
     }
 }

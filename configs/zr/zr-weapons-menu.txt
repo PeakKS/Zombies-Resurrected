@@ -1,0 +1,51 @@
+"Menu"
+{
+    "Pistol"
+    {
+        "item" "glock"
+        "item" "hkp2000"
+        "item" "usp_silencer"
+        "item" "elite"
+        "item" "p250"
+        "item" "cz75a"
+        "item" "tec9"
+        "item" "fiveseven"
+        "item" "deagle"
+        "item" "revolver"
+    }
+    "SMG"
+    {
+        
+        "item" "mac10"
+        "item" "mp9"
+        "item" "mp7"
+        "item" "mp5sd"
+        "item" "ump45"
+        "item" "p90"
+        "item" "bizon"
+    }
+    "Rifle"
+    {
+        "item" "galilar"
+        "item" "famas"
+        "item" "ak47"
+        "item" "m4a1"
+        "item" "m4a1_silencer"
+        "item" "ssg08"
+        "item" "sg556"
+        "item" "aug"
+        "item" "awp"
+        "item" "g3sg1"
+        "item" "scar20"
+    }
+    "Heavy"
+    {
+        "item" "nova"
+        "item" "xm1014"
+        "item" "sawedoff"
+        "item" "mag7"
+        "item" "m249"
+        "item" "negev"
+    }
+
+}
