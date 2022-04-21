@@ -17,11 +17,11 @@ public Plugin myinfo = {
 };
 
 TopMenu clientMenu;
+TopMenuObject weaponsCategory;
 TopMenu weaponsMenu;
 
-GameData weaponsGameData;
-Handle SDKWeapon_Deploy;
-Handle SDKWeapon_GetSlot;
+GameData sdkhooksGameData;
+Handle CBasePlayer_Weapon_Switch;
 
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
@@ -33,24 +33,17 @@ public void OnPluginStart() {
     RegConsoleCmd("sm_zmarket", WeaponsMenuCommand, "Open the weapons menu");
     RegConsoleCmd("sm_guns", WeaponsMenuCommand, "Open the weapons menu");
 
-    weaponsGameData = LoadGameConfigFile("zr-weapons.games");
+    sdkhooksGameData = LoadGameConfigFile("sdkhooks.games/engine.csgo");
 
-    StartPrepSDKCall(SDKCall_Entity);
-    PrepSDKCall_SetFromConf(weaponsGameData, SDKConf_Virtual, "CBaseCombatWeapon::Deploy");
+    StartPrepSDKCall(SDKCall_Player);
+    PrepSDKCall_SetFromConf(sdkhooksGameData, SDKConf_Virtual, "Weapon_Switch");
+    PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+    PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_ByValue);
     PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_ByValue);
-    SDKWeapon_Deploy = EndPrepSDKCall();
+    CBasePlayer_Weapon_Switch = EndPrepSDKCall();
 
-    if(SDKWeapon_Deploy == null) {
-        LogError("Failed to prep CBaseCombatWeapon::Deploy SDK Call");
-    }
-
-    StartPrepSDKCall(SDKCall_Entity);
-    PrepSDKCall_SetFromConf(weaponsGameData, SDKConf_Virtual, "CBaseCombatWeapon::GetSlot");
-    PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_ByValue);
-    SDKWeapon_GetSlot = EndPrepSDKCall();
-
-    if(SDKWeapon_GetSlot == null) {
-        LogError("Failed to prep CBaseCombatWeapon::GetSlot SDK Call");
+    if(CBasePlayer_Weapon_Switch == null) {
+        LogError("Failed to prep Weapon_Switch SDK Call");
     }
 
     LoadTranslations("zr-weapons.phrases");
@@ -87,7 +80,8 @@ SMCResult WeaponConfigKeyValue(SMCParser cmd, const char[] key, const char[] val
 
 public void OnAdminMenuReady(Handle topmenu) {
     clientMenu = ZR_GetClientMenu();
-    clientMenu.AddItem("ZR Weapons", ClientMenuHandler, INVALID_TOPMENUOBJECT);
+    weaponsCategory = clientMenu.AddCategory("ZR Weapons", WeaponsCategoryHandler);
+    clientMenu.AddItem("Choose Weapons", ClientMenuHandler, weaponsCategory);
 }
 
 void ClientMenuHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
@@ -134,16 +128,10 @@ bool BuyWeapon(int client, const char[] weapon) {
     FormatEx(fullname, sizeof(fullname), "weapon_%s", weapon);
     int newWeapon = GivePlayerItem(client, fullname);
     EquipPlayerWeapon(client, newWeapon);
-    SelectWeapon(client, newWeapon);
+    Weapon_Switch(client, newWeapon);
     return true;
 }
 
-void SelectWeapon(int client, int weapon) {
-    if (SDKCall(SDKWeapon_Deploy, weapon))
-        SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", weapon);
+bool Weapon_Switch(int client, int weapon) {
+    return SDKCall(CBasePlayer_Weapon_Switch, client, weapon, 0);
 }
-/*
-int GetSlot(int weapon) {
-    return SDKCall(SDKWeapon_GetSlot, weapon);
-}
-*/
