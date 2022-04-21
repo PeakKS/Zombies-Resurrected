@@ -1,0 +1,139 @@
+"Phrases"
+{
+    "glock"
+    {
+        "en" "Glock"
+    }
+    "hkp2000"
+    {
+        "en" "P2000"
+    }
+    "usp_silencer"
+    {
+        "en" "USP-S"
+    }
+    "elite"
+    {
+        "en" "Dual Berettas"
+    }
+    "p250"
+    {
+        "en" "P250"
+    }
+    "cz75a"
+    {
+        "en" "CZ75-Auto"
+    }
+    "tec9"
+    {
+        "en" "Tec-9"
+    }
+    "fiveseven"
+    {
+        "en" "Five-SeveN"
+    }
+    "deagle"
+    {
+        "en" "Desert Eagle"
+    }
+    "revolver"
+    {
+        "en" "R8 Revolver"
+    }
+    "mac10"
+    {
+        "en" "MAC-10"
+    }
+    "mp9"
+    {
+        "en" "MP9"
+    }
+    "mp7"
+    {
+        "en" "MP7"
+    }
+    "mp5sd"
+    {
+        "en" "MP5-SD"
+    }
+    "ump45"
+    {
+        "en" "UMP-45"
+    }
+    "p90"
+    {
+        "en" "P90"
+    }
+    "bizon"
+    {
+        "en" "PP-Bizon"
+    }
+    "galilar"
+    {
+        "en" "Galil AR"
+    }
+    "famas"
+    {
+        "en" "FAMAS"
+    }
+    "ak47"
+    {
+        "en" "AK-47"
+    }
+    "m4a1"
+    {
+        "en" "M4A4"
+    }
+    "m4a1_silencer"
+    {
+        "en" "M4A1-S"
+    }
+    "ssg08"
+    {
+        "en" "SSG 08"
+    }
+    "sg556"
+    {
+        "en" "SG 553"
+    }
+    "aug"
+    {
+        "en" "AUG"
+    }
+    "awp"
+    {
+        "en" "AWP"
+    }
+    "g3sg1"
+    {
+        "en" "G3SG1"
+    }
+    "scar20"
+    {
+        "en" "SCAR-20"
+    }
+    "nova"
+    {
+        "en" "Nova"
+    }
+    "xm1014"
+    {
+        "en" "XM1014"
+    }
+    "sawedoff"
+    {
+        "en" "Sawed-Off"
+    }
+    "mag7"
+    {
+        "en" "MAG-7"
+    }
+    "m249"
+    {
+        "en" "Glock"
+    }
+    "negev"
+    {
+        "en" "Negev"
+    }
+}
