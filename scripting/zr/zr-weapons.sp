@@ -126,9 +126,16 @@ public void OnAdminMenuReady(Handle topmenu) {
     clientMenu.AddItem("Choose Weapons", ClientMenuHandler, weaponsCategory);
 }
 
+void WeaponsCategoryHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
+    switch (action) {
+        case TopMenuAction_DisplayTitle: topmenu.GetObjName(topobj_id, buffer, maxlength);
+        case TopMenuAction_DisplayOption: topmenu.GetObjName(topobj_id, buffer, maxlength);
+    }
+}
+
 void ClientMenuHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
     switch (action) {
-        case TopMenuAction_DisplayOption: strcopy(buffer, maxlength, "ZR Weapons");
+        case TopMenuAction_DisplayOption: topmenu.GetObjName(topobj_id, buffer, maxlength);
         case TopMenuAction_SelectOption: weaponsMenu.Display(param, TopMenuPosition_Start);
     }
 }
@@ -141,13 +148,6 @@ Action WeaponsMenuCommand(int client, int args) {
 void WeaponsMenuHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
     switch (action) {
         case TopMenuAction_DisplayTitle: strcopy(buffer, maxlength, "ZR Weapons");
-    }
-}
-
-void WeaponsCategoryHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject topobj_id, int param, char[] buffer, int maxlength) {
-    switch (action) {
-        case TopMenuAction_DisplayTitle: topmenu.GetObjName(topobj_id, buffer, maxlength);
-        case TopMenuAction_DisplayOption: topmenu.GetObjName(topobj_id, buffer, maxlength);
     }
 }
 
@@ -176,6 +176,11 @@ Action BuyCommand(int client, int argc) {
 }
 
 bool BuyWeapon(int client, const char[] alias) {
+    if (GetClientTeam(client) != TEAM_HUMAN) {
+        PrintToChat(client, "%s%t", ZR_TAG, "Purchase_Fail", alias, "Purchase_WrongTeam");
+        return false;
+    }
+
     char fullname[64];
     FormatEx(fullname, sizeof(fullname), "weapon_%s", alias);
     CSWeaponID weaponId = CS_AliasToWeaponID(alias);
