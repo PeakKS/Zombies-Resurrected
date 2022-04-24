@@ -1,5 +1,21 @@
 "Phrases"
 {
+    "Purchase_Success"
+    {
+        "en" "Purchased %t (-$%d)"
+    }
+    "Purchase_Fail"
+    {
+        "en" "Failed to purchase %t (%t)"
+    }
+    "Purchase_Poor"
+    {
+        "en" "Too expensive [$%d]"
+    }
+    "Purchase_Restricted"
+    {
+        "en" "Weapon is restricted"
+    }
     "glock"
     {
         "en" "Glock"

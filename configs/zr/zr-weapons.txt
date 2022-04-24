@@ -13,18 +13,24 @@
             "price"     "300"
             "restrict"  "no"
             "knockback" "1.1"
+            "alias"     "p2k"
+            "alias"     "p2000"
         }
         "usp_silencer"
         {
             "price"     "200"
             "restrict"  "no"
             "knockback" "1.1"
+            "alias"     "usp"
+            "alias"     "usps"
         }
         "elite"
         {
             "price"     "500"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "dualies"
+            "alias"     "dualberettas"
         }
         "p250"
         {
@@ -37,6 +43,8 @@
             "price"     "500"
             "restrict"  "no"
             "knockback" "1.1"
+            "alias"     "cz"
+            "alias"     "cz75"
         }
         "tec9"
         {
@@ -49,6 +57,7 @@
             "price"     "500"
             "restrict"  "no"
             "knockback" "1.3"
+            "alias"     "57"
         }
         "deagle"
         {
@@ -61,6 +70,7 @@
             "price"     "500"
             "restrict"  "no"
             "knockback" "1.3"
+            "alias"     "r8"
         }
     }
     "SMG"
@@ -89,6 +99,7 @@
             "price"     "1250"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "mp5"
         }
         "ump45"
         {
@@ -116,6 +127,7 @@
             "price"     "2000"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "galil"
         }
         "famas"
         {
@@ -128,30 +140,38 @@
             "price"     "2500"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "ak"
         }
         "m4a1"
         {
             "price"     "2500"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "m4a4"
+            "alias"     "m4"
         }
         "m4a1_silencer"
         {
             "price"     "2500"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "m4a1s"
         }
         "ssg08"
         {
             "price"     "3000"
             "restrict"  "no"
             "knockback" "1.8"
+            "alias"     "ssg"
+            "alias"     "scout"
         }
         "sg556"
         {
             "price"     "3000"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "sg"
+            "alias"     "sg553"
         }
         "aug"
         {
@@ -170,12 +190,14 @@
             "price"     "5000"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "g3"
         }
         "scar20"
         {
             "price"     "5000"
             "restrict"  "no"
             "knockback" "1.0"
+            "alias"     "scar"
         }
     }
     "Heavy"
@@ -191,6 +213,7 @@
             "price"     "2500"
             "restrict"  "no"
             "knockback" "0.8"
+            "alias"     "xm"
         }
         "sawedoff"
         {
@@ -217,5 +240,4 @@
             "knockback" "0.9"
         }
     }
-
 }

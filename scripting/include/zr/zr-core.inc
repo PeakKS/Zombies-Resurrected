@@ -6,6 +6,8 @@
 #define TEAM_ZOMBIE 2
 #define TEAM_HUMAN  3
 
+#define ZR_TAG " \x03[ZR]\x01 "
+
 forward Action ZR_OnClientHumanPre(int client);
 forward void ZR_OnClientHuman(int client);
 native bool ZR_SpawnHuman(int client);

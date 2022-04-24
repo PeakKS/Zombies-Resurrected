@@ -22,6 +22,7 @@ enum struct WeaponData {
 }
 
 WeaponData weaponInfo[CSWeapon_MAX_WEAPONS_NO_KNIFES];
+StringMap aliasMap;
 
 TopMenu clientMenu;
 TopMenuObject weaponsCategory;
@@ -59,7 +60,8 @@ public void OnPluginStart() {
     char error[256];
     BuildPath(Path_SM, path, sizeof(path), "configs/zr/zr-weapons.txt");
     
-    weaponsMenu = new TopMenu(WeaponsMenuHandler);    
+    weaponsMenu = new TopMenu(WeaponsMenuHandler);
+    aliasMap = new StringMap();
 
     SMCParser parser = new SMCParser();
     parser.OnEnterSection = WeaponConfigNewSection;
@@ -68,42 +70,52 @@ public void OnPluginStart() {
     parser.ParseFile(path);
     delete parser;
 
-    BuildPath(Path_SM, path, sizeof(path), "configs/zr/zr-weapons-menu.txt");
+    //Can use the same config pending my sourcemod PR
+    //BuildPath(Path_SM, path, sizeof(path), "configs/zr/zr-weapons-menu.txt");
     if (!weaponsMenu.LoadConfig(path, error, sizeof(error))) {
         LogError("Could not load zr-weapons menu config (file \"%s\": %s", path, error);
     }
 }
 
-static int configDepth = 0;
-CSWeaponID tempId;
+int _ConfigDepth = 0;
+CSWeaponID _TempId;
+TopMenuObject _TempItem;
 
 SMCResult WeaponConfigNewSection(SMCParser smc, const char[] name, bool opt_quotes) {
     static TopMenuObject tempCategory;
 
-    if (configDepth == 1) {
+    if (_ConfigDepth == 1) {
         tempCategory = weaponsMenu.AddCategory(name, WeaponsCategoryHandler);
-    } else if (configDepth == 2) {
-        tempId = CS_AliasToWeaponID(name);
-        weaponsMenu.AddItem(name, WeaponsItemHandler, tempCategory);
+    } else if (_ConfigDepth == 2) {
+        _TempId = CS_AliasToWeaponID(name);
+        char commandBuffer[64];
+        FormatEx(commandBuffer, sizeof(commandBuffer), "sm_%s", name);
+        RegConsoleCmd(commandBuffer, BuyCommand);
+        _TempItem = weaponsMenu.AddItem(name, WeaponsItemHandler, tempCategory);
     }
-    configDepth++;
+    _ConfigDepth++;
     return SMCParse_Continue;
 }
 
 SMCResult WeaponConfigLeaveSection(SMCParser smc) {
-    configDepth--;
+    _ConfigDepth--;
     return SMCParse_Continue;
 }
 
 SMCResult WeaponConfigKeyValue(SMCParser cmd, const char[] key, const char[] value, bool key_quotes, bool value_quotes) {
     if (StrEqual(key, "price")) {
-        weaponInfo[tempId].price = StringToInt(value);
+        weaponInfo[_TempId].price = StringToInt(value);
     } else if (StrEqual(key, "restrict")) {
         if (StrEqual(value, "yes")) {
-            weaponInfo[tempId].restricted = true;
+            weaponInfo[_TempId].restricted = true;
         }
     } else if (StrEqual(key, "alias")) {
-
+        char commandBuffer[64];
+        FormatEx(commandBuffer, sizeof(commandBuffer), "sm_%s", value);
+        RegConsoleCmd(commandBuffer, BuyCommand);
+        char realName[64];
+        weaponsMenu.GetObjName(_TempItem, realName, sizeof(realName));
+        aliasMap.SetString(value, realName);
     }
     return SMCParse_Continue;
 }
@@ -144,22 +156,56 @@ void WeaponsItemHandler(TopMenu topmenu, TopMenuAction action, TopMenuObject top
     topmenu.GetObjName(topobj_id, weapon, sizeof(weapon));
     CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
     switch (action) {
-        case TopMenuAction_DisplayOption: {
-            FormatEx(buffer, maxlength, "%t [$%d]", weapon, weaponInfo[weaponId].price);
-        }
-        case TopMenuAction_SelectOption: {
-            BuyWeapon(param, weapon);
-        }
+        case TopMenuAction_DisplayOption: FormatEx(buffer, maxlength, "%t [$%d]", weapon, weaponInfo[weaponId].price);
+        case TopMenuAction_DrawOption: buffer[0] = (!Affordable(weaponId, param) || weaponInfo[weaponId].restricted)? ITEMDRAW_DISABLED : ITEMDRAW_DEFAULT;
+        case TopMenuAction_SelectOption: BuyWeapon(param, weapon);
     }
 }
 
-bool BuyWeapon(int client, const char[] name) {
+Action BuyCommand(int client, int argc) {
+    char weaponName[64];
+    GetCmdArg(0, weaponName, sizeof(weaponName));
+    int offset = 3;
+    if (CS_AliasToWeaponID(weaponName[offset]) == CSWeapon_NONE) {
+        //This command was created on an alias, get the real name
+        aliasMap.GetString(weaponName[3], weaponName, sizeof(weaponName));
+        offset = 0;
+    }
+    BuyWeapon(client, weaponName[offset]);
+    return Plugin_Handled;
+}
+
+bool BuyWeapon(int client, const char[] alias) {
     char fullname[64];
-    FormatEx(fullname, sizeof(fullname), "weapon_%s", name);
+    FormatEx(fullname, sizeof(fullname), "weapon_%s", alias);
+    CSWeaponID weaponId = CS_AliasToWeaponID(alias);
+
+    int cash = GetEntProp(client, Prop_Send, "m_iAccount");
+    int price = weaponInfo[weaponId].price;
+
+    if (!Affordable(weaponId, client)) {
+        PrintToChat(client, "%s%t", ZR_TAG, "Purchase_Fail", alias, "Purchase_Poor", price);
+        return false;
+    }
+
+    if (weaponInfo[weaponId].restricted) {
+        PrintToChat(client, "%s%t", ZR_TAG, "Purchase_Fail", alias, "Purchase_Restricted");
+        return false;
+    }
+
     int newWeapon = GivePlayerItem(client, fullname);
     EquipPlayerWeapon(client, newWeapon);
     Weapon_Switch(client, newWeapon);
+
+    SetEntProp(client, Prop_Send, "m_iAccount", cash - price);
+
+    PrintToChat(client, "%s%t", ZR_TAG, "Purchase_Success", alias, price);
+
     return true;
+}
+
+bool Affordable(CSWeaponID weaponID, int client) {
+    return weaponInfo[weaponID].price <= GetEntProp(client, Prop_Send, "m_iAccount");
 }
 
 bool Weapon_Switch(int client, int weapon) {
