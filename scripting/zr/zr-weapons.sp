@@ -70,7 +70,7 @@ public void OnPluginStart() {
     parser.ParseFile(path);
     delete parser;
 
-    //Can use the same config pending my sourcemod PR
+    //Can use the same config pending my sourcemod PR https://github.com/alliedmodders/sourcemod/pull/1757
     //BuildPath(Path_SM, path, sizeof(path), "configs/zr/zr-weapons-menu.txt");
     if (!weaponsMenu.LoadConfig(path, error, sizeof(error))) {
         LogError("Could not load zr-weapons menu config (file \"%s\": %s", path, error);
